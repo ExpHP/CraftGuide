@@ -29,6 +29,7 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 	private ItemStack urn;
 	private Class unfiredPotteryClass;
 	private Class endStoneClass;
+	private Class unfiredBrickClass;
 	private Block aestheticOpaque;
 	private Item soap;
 	private Item potash;
@@ -58,10 +59,11 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 			urn = new ItemStack((Item)btw.getField("fcUrn").get(null));
 			unfiredPotteryClass = Class.forName("FCBlockUnfiredPottery");
 			endStoneClass = Class.forName("FCBlockEndStone");
+			unfiredBrickClass = Class.forName("FCBlockUnfiredBrick");
 
 			soap = (Item)btw.getField("fcSoap").get(null);
 			potash = (Item)btw.getField("fcPotash").get(null);
-			sawDust = (Item)btw.getField("fcSawDust").get(null);
+			sawDust = (Item)btw.getField("fcItemSawDust").get(null);
 			soulDust = (Item)btw.getField("fcSoulDust").get(null);
 			hellfireDust = (Item)btw.getField("fcHellfireDust").get(null);
 			groundNetherrack = (Item)btw.getField("fcGroundNetherrack").get(null);
@@ -434,6 +436,12 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 				ItemStack output2 = new ItemStack(aestheticOpaque, 1, 10);
 				addKilnRecipe(generator, template, kiln, input, output1, output2);
 			}
+			else if(unfiredBrickClass.isAssignableFrom(block.getClass()))
+			{
+				ItemStack output1 = new ItemStack(Item.brick);
+				ItemStack output2 = null;
+				addKilnRecipe(generator, template, kiln, input, output1, output2);
+			}
 			else
 			{
 				int item = (Integer)getPrivateValue(Block.class, block, "m_iItemIndexDroppedWhenCookedByKiln");
@@ -472,7 +480,7 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 		RecipeTemplate template = generator.createRecipeTemplate(recipeSlots, hopper);
 		ItemStack groundNetherrackStack = new ItemStack(groundNetherrack, 8);
 		ItemStack hellfireDustStack = new ItemStack(hellfireDust, 8);
-		ItemStack wicker = new ItemStack((Item)Class.forName("FCBetterThanWolves").getField("fcWicker").get(null));
+		ItemStack wicker = new ItemStack((Item)Class.forName("FCBetterThanWolves").getField("fcItemWickerPane").get(null));
 		ItemStack slowsand = new ItemStack(Block.slowSand);
 		ItemStack soulDustStack = new ItemStack(soulDust, 8);
 		ItemStack sawDustStack = new ItemStack(sawDust, 8);

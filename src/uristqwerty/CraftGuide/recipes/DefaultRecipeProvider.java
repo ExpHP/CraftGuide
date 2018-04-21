@@ -283,7 +283,7 @@ public class DefaultRecipeProvider extends CraftGuideAPIObject implements Recipe
 		}
 		else if(itemStack.hasTagCompound())
 		{
-			fuel = TileEntityFurnace.getItemBurnTime(itemStack);
+			fuel = (itemStack == null) ? 0 : itemStack.getItem().GetFurnaceBurnTime(itemStack.getItemDamage()) * 2;
 		}
 		else
 		{
@@ -330,7 +330,7 @@ public class DefaultRecipeProvider extends CraftGuideAPIObject implements Recipe
 
 		if(value == null)
 		{
-			value = TileEntityFurnace.getItemBurnTime(stack);
+			value = (stack == null) ? 0 : stack.getItem().GetFurnaceBurnTime(stack.getItemDamage()) * 2;
 			burnCache.put(lookup, value);
 		}
 
