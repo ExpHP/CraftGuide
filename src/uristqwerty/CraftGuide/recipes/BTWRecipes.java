@@ -30,6 +30,8 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 	private Class unfiredPotteryClass;
 	private Class endStoneClass;
 	private Class unfiredBrickClass;
+	private Class chunkOreIronClass;
+	private Class chunkOreGoldClass;
 	private Block aestheticOpaque;
 	private Item soap;
 	private Item potash;
@@ -60,6 +62,8 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 			unfiredPotteryClass = Class.forName("FCBlockUnfiredPottery");
 			endStoneClass = Class.forName("FCBlockEndStone");
 			unfiredBrickClass = Class.forName("FCBlockUnfiredBrick");
+			chunkOreIronClass = Class.forName("FCBlockChunkOreIron");
+			chunkOreGoldClass = Class.forName("FCBlockChunkOreGold");
 
 			soap = (Item)btw.getField("fcSoap").get(null);
 			potash = (Item)btw.getField("fcPotash").get(null);
@@ -439,6 +443,18 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 			else if(unfiredBrickClass.isAssignableFrom(block.getClass()))
 			{
 				ItemStack output1 = new ItemStack(Item.brick);
+				ItemStack output2 = null;
+				addKilnRecipe(generator, template, kiln, input, output1, output2);
+			}
+			else if(chunkOreIronClass.isAssignableFrom(block.getClass()))
+			{
+				ItemStack output1 = new ItemStack((Item)Class.forName("FCBetterThanWolves").getField("fcItemNuggetIron").get(null));
+				ItemStack output2 = null;
+				addKilnRecipe(generator, template, kiln, input, output1, output2);
+			}
+			else if(chunkOreGoldClass.isAssignableFrom(block.getClass()))
+			{
+				ItemStack output1 = new ItemStack((Item)Class.forName("FCBetterThanWolves").getField("fcItemNuggetGold").get(null));
 				ItemStack output2 = null;
 				addKilnRecipe(generator, template, kiln, input, output1, output2);
 			}
