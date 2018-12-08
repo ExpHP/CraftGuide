@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import net.minecraft.src.Block;
+import net.minecraft.src.FCAddOnHandler;
 import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ShapedRecipes;
@@ -46,24 +47,30 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 	private Object[][][] extraStokedCauldronRecipes;
 	private Object[][][] extraCrucibleRecipes;
 	private Object[][][] extraStokedCrucibleRecipes;
+	
+	private String classPackagePrefix = "";
 
+	public BTWRecipes() {
+		classPackagePrefix = getclassPackagePrefix();
+	}
+	
 	@Override
 	public void generateRecipes(RecipeGenerator generator)
 	{
 		try
 		{
-			Class btw = Class.forName("FCBetterThanWolves");
+			Class btw = Class.forName(classPackagePrefix+"FCBetterThanWolves");
 			aestheticOpaque = (Block)btw.getField("fcAestheticOpaque").get(null);
 			crucible = new ItemStack((Block)btw.getField("fcCrucible").get(null));
 			bellows = new ItemStack((Block)btw.getField("fcBellows").get(null));
 			hibachi = new ItemStack((Block)btw.getField("fcBBQ").get(null));
 			soulUrn = new ItemStack((Item)btw.getField("fcSoulUrn").get(null));
 			urn = new ItemStack((Item)btw.getField("fcUrn").get(null));
-			unfiredPotteryClass = Class.forName("FCBlockUnfiredPottery");
-			endStoneClass = Class.forName("FCBlockEndStone");
-			unfiredBrickClass = Class.forName("FCBlockUnfiredBrick");
-			chunkOreIronClass = Class.forName("FCBlockChunkOreIron");
-			chunkOreGoldClass = Class.forName("FCBlockChunkOreGold");
+			unfiredPotteryClass = Class.forName(classPackagePrefix+"FCBlockUnfiredPottery");
+			endStoneClass = Class.forName(classPackagePrefix+"FCBlockEndStone");
+			unfiredBrickClass = Class.forName(classPackagePrefix+"FCBlockUnfiredBrick");
+			chunkOreIronClass = Class.forName(classPackagePrefix+"FCBlockChunkOreIron");
+			chunkOreGoldClass = Class.forName(classPackagePrefix+"FCBlockChunkOreGold");
 
 			soap = (Item)btw.getField("fcSoap").get(null);
 			potash = (Item)btw.getField("fcPotash").get(null);
@@ -101,24 +108,24 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 				}
 			}
 
-			Object millstoneRecipes = Class.forName("FCCraftingManagerMillStone").getMethod("getInstance").invoke(null);
+			Object millstoneRecipes = Class.forName(classPackagePrefix+"FCCraftingManagerMillStone").getMethod("getInstance").invoke(null);
 			ItemStack millstone = new ItemStack((Block)btw.getField("fcMillStone").get(null));
 			addBulkRecipes(generator, millstoneRecipes, millstone, false, extraMillstoneRecipes);
 
-			Object cauldronRecipes = Class.forName("FCCraftingManagerCauldron").getMethod("getInstance").invoke(null);
+			Object cauldronRecipes = Class.forName(classPackagePrefix+"FCCraftingManagerCauldron").getMethod("getInstance").invoke(null);
 			ItemStack cauldron = new ItemStack((Block)btw.getField("fcCauldron").get(null));
 			addBulkRecipes(generator, cauldronRecipes, cauldron, false, extraCauldronRecipes);
 
-			Object cauldronStokedRecipes = Class.forName("FCCraftingManagerCauldronStoked").getMethod("getInstance").invoke(null);
+			Object cauldronStokedRecipes = Class.forName(classPackagePrefix+"FCCraftingManagerCauldronStoked").getMethod("getInstance").invoke(null);
 			addBulkRecipes(generator, cauldronStokedRecipes, cauldron, true, extraStokedCauldronRecipes);
 
-			Object crucibleRecipes = Class.forName("FCCraftingManagerCrucible").getMethod("getInstance").invoke(null);
+			Object crucibleRecipes = Class.forName(classPackagePrefix+"FCCraftingManagerCrucible").getMethod("getInstance").invoke(null);
 			addBulkRecipes(generator, crucibleRecipes, crucible, false, extraCrucibleRecipes);
 
-			Object crucibleStokedRecipes = Class.forName("FCCraftingManagerCrucibleStoked").getMethod("getInstance").invoke(null);
+			Object crucibleStokedRecipes = Class.forName(classPackagePrefix+"FCCraftingManagerCrucibleStoked").getMethod("getInstance").invoke(null);
 			addBulkRecipes(generator, crucibleStokedRecipes, crucible, true, extraStokedCrucibleRecipes);
 
-			Object anvilRecipes = Class.forName("FCCraftingManagerAnvil").getMethod("getInstance").invoke(null);
+			Object anvilRecipes = Class.forName(classPackagePrefix+"FCCraftingManagerAnvil").getMethod("getInstance").invoke(null);
 			ItemStack anvil = new ItemStack((Block)btw.getField("fcAnvil").get(null));
 			addAnvilRecipes(generator, anvilRecipes, anvil);
 
@@ -166,7 +173,7 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 
 	private void addBulkRecipes(RecipeGenerator generator, Object manager, ItemStack block, boolean stoked, Object[][][] extraRecipes) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException
 	{
-		Field recipes = Class.forName("FCCraftingManagerBulk").getDeclaredField("m_recipes");
+		Field recipes = Class.forName(classPackagePrefix+"FCCraftingManagerBulk").getDeclaredField("m_recipes");
 		recipes.setAccessible(true);
 		List recipeList = (List)recipes.get(manager);
 
@@ -174,8 +181,8 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 
 		for(Object recipe: recipeList)
 		{
-			List input = (List)Class.forName("FCCraftingManagerBulkRecipe").getMethod("getCraftingIngrediantList").invoke(recipe);
-			List output = (List)Class.forName("FCCraftingManagerBulkRecipe").getMethod("getCraftingOutputList").invoke(recipe);
+			List input = (List)Class.forName(classPackagePrefix+"FCCraftingManagerBulkRecipe").getMethod("getCraftingIngrediantList").invoke(recipe);
+			List output = (List)Class.forName(classPackagePrefix+"FCCraftingManagerBulkRecipe").getMethod("getCraftingOutputList").invoke(recipe);
 
 			inSize = Math.max(inSize, input.size());
 			outSize = Math.max(outSize, output.size());
@@ -225,8 +232,8 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 
 		for(Object recipe: recipeList)
 		{
-			List input = (List)Class.forName("FCCraftingManagerBulkRecipe").getMethod("getCraftingIngrediantList").invoke(recipe);
-			List output = (List)Class.forName("FCCraftingManagerBulkRecipe").getMethod("getCraftingOutputList").invoke(recipe);
+			List input = (List)Class.forName(classPackagePrefix+"FCCraftingManagerBulkRecipe").getMethod("getCraftingIngrediantList").invoke(recipe);
+			List output = (List)Class.forName(classPackagePrefix+"FCCraftingManagerBulkRecipe").getMethod("getCraftingOutputList").invoke(recipe);
 
 			Object[] recipeContents = new Object[inColumns * 3 + outColumns * 3 + (stoked? 3 : 1)];
 
@@ -285,7 +292,7 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 
 	private void addAnvilRecipes(RecipeGenerator generator, Object manager, ItemStack anvil) throws SecurityException, NoSuchFieldException, ClassNotFoundException, IllegalArgumentException, IllegalAccessException
 	{
-		Field recipes = Class.forName("FCCraftingManagerAnvil").getDeclaredField("recipes");
+		Field recipes = Class.forName(classPackagePrefix+"FCCraftingManagerAnvil").getDeclaredField("recipes");
 		recipes.setAccessible(true);
 		List recipeList = (List)recipes.get(manager);
 
@@ -364,7 +371,7 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 		};
 
 		RecipeTemplate template = generator.createRecipeTemplate(recipeSlots, turntable);
-		Block unfiredPottery = (Block)Class.forName("FCBetterThanWolves").getField("fcUnfiredPottery").get(null);
+		Block unfiredPottery = (Block)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcUnfiredPottery").get(null);
 		ItemStack clay = new ItemStack(Item.clay);
 
 		addTurntableRecipe(generator, template, turntable, new ItemStack(Block.blockClay), new ItemStack(unfiredPottery, 1, 0), clay);
@@ -416,19 +423,27 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addKilnRecipe(RecipeGenerator generator, RecipeTemplate template, ItemStack kiln, Block block) throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException, ClassNotFoundException
 	{
 		if(unfiredPotteryClass.isAssignableFrom(block.getClass()))
 		{
-			ItemStack planter = new ItemStack((Block)Class.forName("FCBetterThanWolves").getField("fcPlanter").get(null));
-			ItemStack vase = new ItemStack((Block)Class.forName("FCBetterThanWolves").getField("fcVase").get(null));
-			ItemStack mould = new ItemStack((Item)Class.forName("FCBetterThanWolves").getField("fcItemMould").get(null));
+			ItemStack planter = new ItemStack((Block)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcPlanter").get(null));
+			ItemStack vase = new ItemStack((Block)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcVase").get(null));
+			ItemStack mould = new ItemStack((Item)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcItemMould").get(null));
+			ItemStack netherBrick = new ItemStack((Item)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcItemNetherBrick").get(null));
 
+			
 			addKilnRecipe(generator, template, kiln, new ItemStack(block, 1, 0), crucible);
 			addKilnRecipe(generator, template, kiln, new ItemStack(block, 1, 1), planter);
 			addKilnRecipe(generator, template, kiln, new ItemStack(block, 1, 2), vase);
 			addKilnRecipe(generator, template, kiln, new ItemStack(block, 1, 3), urn);
 			addKilnRecipe(generator, template, kiln, new ItemStack(block, 1, 4), mould);
+			addKilnRecipe(generator, template, kiln, new ItemStack(block, 1, 5), new ItemStack(Item.brick));
+			addKilnRecipe(generator, template, kiln, new ItemStack(block, 1, 7), netherBrick);
+			addKilnRecipe(generator, template, kiln, new ItemStack(block, 1, 9), new ItemStack(Item.cake));
+			addKilnRecipe(generator, template, kiln, new ItemStack(block, 1, 12), new ItemStack(Item.pumpkinPie));
+			addKilnRecipe(generator, template, kiln, new ItemStack(block, 1, 13), new ItemStack(Item.bread));
 		}
 		else
 		{
@@ -436,7 +451,7 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 
 			if(endStoneClass.isAssignableFrom(block.getClass()))
 			{
-				ItemStack output1 = new ItemStack((Item)Class.forName("FCBetterThanWolves").getField("fcItemBrimstone").get(null));
+				ItemStack output1 = new ItemStack((Item)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcItemEnderSlag").get(null));
 				ItemStack output2 = new ItemStack(aestheticOpaque, 1, 10);
 				addKilnRecipe(generator, template, kiln, input, output1, output2);
 			}
@@ -448,13 +463,13 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 			}
 			else if(chunkOreIronClass.isAssignableFrom(block.getClass()))
 			{
-				ItemStack output1 = new ItemStack((Item)Class.forName("FCBetterThanWolves").getField("fcItemNuggetIron").get(null));
+				ItemStack output1 = new ItemStack((Item)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcItemNuggetIron").get(null));
 				ItemStack output2 = null;
 				addKilnRecipe(generator, template, kiln, input, output1, output2);
 			}
 			else if(chunkOreGoldClass.isAssignableFrom(block.getClass()))
 			{
-				ItemStack output1 = new ItemStack((Item)Class.forName("FCBetterThanWolves").getField("fcItemNuggetGold").get(null));
+				ItemStack output1 = new ItemStack(Item.goldNugget);
 				ItemStack output2 = null;
 				addKilnRecipe(generator, template, kiln, input, output1, output2);
 			}
@@ -462,7 +477,19 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 			{
 				int item = (Integer)getPrivateValue(Block.class, block, "m_iItemIndexDroppedWhenCookedByKiln");
 				int damage = (Integer)getPrivateValue(Block.class, block, "m_iItemDamageDroppedWhenCookedByKiln");
-				addKilnRecipe(generator, template, kiln, input, new ItemStack(item, 1, damage));
+				
+				if (item != -1) {
+					addKilnRecipe(generator, template, kiln, input, new ItemStack(item, 1, damage));
+				}
+				else {
+					try {
+						item = block.GetItemIndexDroppedWhenCookedByKiln(null,0,0,0);
+						addKilnRecipe(generator, template, kiln, input, new ItemStack(item, 1, 0));
+					}
+					catch (Exception e) {
+            FCAddOnHandler.LogMessage("There is an error on a kiln recipe. Please leave a report about it on http://www.sargunster.com/btwforum/viewtopic.php?f=12&t=9452 so it can be fixed.");
+					}
+				}
 			}
 		}
 	}
@@ -496,7 +523,7 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 		RecipeTemplate template = generator.createRecipeTemplate(recipeSlots, hopper);
 		ItemStack groundNetherrackStack = new ItemStack(groundNetherrack, 8);
 		ItemStack hellfireDustStack = new ItemStack(hellfireDust, 8);
-		ItemStack wicker = new ItemStack((Item)Class.forName("FCBetterThanWolves").getField("fcItemWickerPane").get(null));
+		ItemStack wicker = new ItemStack((Item)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcItemWickerPane").get(null));
 		ItemStack slowsand = new ItemStack(Block.slowSand);
 		ItemStack soulDustStack = new ItemStack(soulDust, 8);
 		ItemStack sawDustStack = new ItemStack(sawDust, 8);
@@ -526,18 +553,18 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 
 		RecipeTemplate template = generator.createRecipeTemplate(recipeSlots, saw);
 
-		ItemStack bloodWood = new ItemStack((Block)Class.forName("FCBetterThanWolves").getField("fcBloodWood").get(null));
-		ItemStack gears = new ItemStack((Item)Class.forName("FCBetterThanWolves").getField("fcGear").get(null));
+		ItemStack bloodWood = new ItemStack((Block)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcBloodWood").get(null));
+		ItemStack gears = new ItemStack((Item)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcGear").get(null));
 		ItemStack soulDustStack = new ItemStack(soulDust, 2);
 		ItemStack sawDustStack = new ItemStack(sawDust, 2);
 		gears.stackSize = 2;
 
-		Block aestheticNonOpaque = (Block)Class.forName("FCBetterThanWolves").getField("fcAestheticNonOpaque").get(null);
-		Block companionCube = (Block)Class.forName("FCBetterThanWolves").getField("fcCompanionCube").get(null);
+		Block aestheticNonOpaque = (Block)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcAestheticNonOpaque").get(null);
+		Block companionCube = (Block)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcCompanionCube").get(null);
 
-		int mouldingID = (Integer)Class.forName("FCBetterThanWolves").getField("fcBlockWoodMouldingItemStubID").get(null);
-		int sidingID = (Integer)Class.forName("FCBetterThanWolves").getField("fcBlockWoodSidingItemStubID").get(null);
-		int cornerID = (Integer)Class.forName("FCBetterThanWolves").getField("fcBlockWoodCornerItemStubID").get(null);
+		int mouldingID = (Integer)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcBlockWoodMouldingItemStubID").get(null);
+		int sidingID = (Integer)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcBlockWoodSidingItemStubID").get(null);
+		int cornerID = (Integer)Class.forName(classPackagePrefix+"FCBetterThanWolves").getField("fcBlockWoodCornerItemStubID").get(null);
 
 		addSawRecipe(generator, template, saw, bloodWood, new ItemStack(Block.planks, 4, 3), soulDustStack);
 
@@ -736,5 +763,28 @@ public class BTWRecipes extends CraftGuideAPIObject implements RecipeProvider
 					}
 			};
 		}
+	}
+	
+	private String getclassPackagePrefix() {
+		try {
+			if (Class.forName("FCBetterThanWolves") != null) {
+				System.out.println("Returning empty");
+				return "";
+			}
+		}
+		catch(Throwable e) {
+			System.out.println(e);
+		}
+		try {
+			if (Class.forName("net.minecraft.src.FCBetterThanWolves") != null) {
+				System.out.println("Returning net.minecraft.src.");
+				return "net.minecraft.src.";
+			}
+		}
+		catch(Throwable e) {
+			System.out.println(e);
+		}
+		System.out.println("Returning empty (catch)");
+		return "";
 	}
 }

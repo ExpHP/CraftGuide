@@ -24,7 +24,7 @@ public class CraftGuide_Vanilla implements CraftGuideLoaderSide
 	{
 		if(name.equals("BTW"))
 		{
-			return isClassLoaded("FCBetterThanWolves");
+			return isClassLoaded(getClassPackagePrefix()+"FCBetterThanWolves");
 		}
 		else if(name.equals("Forge"))
 		{
@@ -32,6 +32,22 @@ public class CraftGuide_Vanilla implements CraftGuideLoaderSide
 		}
 
 		return false;
+	}
+	
+	private String getClassPackagePrefix() {
+		try {
+			if (Class.forName("FCBetterThanWolves") != null) {
+				return "";
+			}
+		}
+		catch(Throwable e) {}
+		try {
+			if (Class.forName("net.minecraft.src.FCBetterThanWolves") != null) {
+				return "net.minecraft.src.";
+			}
+		}
+		catch(Throwable e) {}
+		return "";
 	}
 
 	private boolean isClassLoaded(String classname)
